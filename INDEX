@@ -1,0 +1,6 @@
+ lars	Compute the LAR, lasso or forward stagewise coefficient paths        
+ plot.lars   Plot the coefficient paths
+ predict.lars	  Predict from a lars model
+ cv.lars     Produce the K-fold cross-validation curve for lars
+ coef.lars   Extract coefficients from a lars model
+   
