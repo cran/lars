@@ -6,7 +6,7 @@ Computes the K-fold cross-validated mean squared prediction error for
 lars, lasso, or forward stagewise.}
 \usage{
 cv.lars(x, y, K = 10, fraction = seq(from = 0, to = 1, length = 100), 
-    trace = F, plot.it = T, se = T, ...)
+    trace = FALSE, plot.it = TRUE, se = TRUE, ...)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
@@ -21,7 +21,7 @@ cv.lars(x, y, K = 10, fraction = seq(from = 0, to = 1, length = 100),
   \item{\dots}{Additional arguments to \code{lars}}
 }
 \value{
-Invisibly returns a list with components (which can be plotted using \code{plot.cv.lars})
+Invisibly returns a list with components (which can be plotted using \code{plotCVlars})
   \item{fraction}{As above}
   \item{cv}{The CV curve at each value of fraction}
   \item{cv.error}{The standard error of the CV curve}

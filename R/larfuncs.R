@@ -248,6 +248,7 @@ function(x, upper, lower, width = 0.02, ...)
           R <- downdateR(R, id)
         }
         dropid <- active[drops]	# indices from 1:m
+        beta[k+1,dropid]<-0  # added to make sure dropped coef is zero
         active <- active[!drops]
         Sign <- Sign[!drops]
       }
@@ -541,7 +542,8 @@ function(r, z, k = p)
 		as.integer(k),
 		z,
 		as.integer(dz[1]),
-		as.integer(dz[2]))[c(1, 4)]
+		as.integer(dz[2]),
+                PACKAGE="lars")[c(1, 4)]
 }
 ".First.lib" <-
 function (lib, pkg) 

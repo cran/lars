@@ -8,8 +8,8 @@ These are all variants of Lasso, and provide the entire sequence of
 coefficients and fits, starting from zero, to the least squares fit.
 }
 \usage{
-(x, y, type = c("lasso", "lar", "forward.stagewise"), 
-    trace = F, Gram, eps = .Machine$double.eps, max.steps, use.Gram = T)
+lars(x, y, type = c("lasso", "lar", "forward.stagewise"), 
+    trace = FALSE, Gram, eps = .Machine$double.eps, max.steps, use.Gram = TRUE)
 }
 \arguments{
 \item{x}{
@@ -45,7 +45,7 @@ An effective zero
 }
 \item{use.Gram}{
 When the number m of variables is very large, i.e. larger than N, then
-you may not want LARS to precompute the Gram matrix. Default is use.Gram=T
+you may not want LARS to precompute the Gram matrix. Default is use.Gram=TRUE
 }}
 \value{
 A "lars" object is returned, for which print, plot and predict
