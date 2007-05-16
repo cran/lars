@@ -10,7 +10,7 @@ allows one to extract a prediction at a particular point along the path.
 }
 \usage{
 predict.lars(object, newx, s, type = c("fit", "coefficients"), mode = c("step", 
-    "fraction", "norm"), ...)
+    "fraction", "norm", "lambda"), ...)
 coef.lars(object, ...)
 }
 \arguments{
@@ -38,6 +38,9 @@ corresponding to step s. If mode="fraction", then s should be a number
 between 0 and 1, and it refers to the ratio of the L1 norm of the
 coefficient vector, relative to the norm at the full LS solution.
 Mode="norm" means s refers to the L1 norm of the coefficient vector.
+Mode="lambda" uses the lasso regularization parameter for s; for other
+models it is the maximal correlation (does not make sense for
+lars/stepwise models).
 Abbreviations allowed.
 }
 \item{\dots}{Any arguments for \code{predict.lars} should work for \code{coef.lars}}
@@ -52,9 +55,10 @@ solution simultaneously for ALL values of the shrinkage parameter in
 the same computational cost as a least squares fit.
 }
 \references{
-Efron, Hastie, Johnstone and Tibshirani (2002)
-Hastie, Tibshirani and Friedman (2002) Elements of Statistical
-Learning, Springer, NY.
+Efron, Hastie, Johnstone and Tibshirani (2002) "Least Angle Regression"
+(with discussion) \emph{Annals of Statistics}; see also
+\url{http://www-stat.stanford.edu/~hastie/Papers/LARS/LeastAngle_2002.pdf}.
+Hastie, Tibshirani and Friedman (2002) Elements of Statistical Learning, Springer, NY.
 }
 \author{Trevor Hastie}
 \seealso{

@@ -29,7 +29,7 @@ Invisibly returns a list with components (which can be plotted using \code{plotC
 \references{
 Efron, Hastie, Johnstone and Tibshirani (2003) "Least Angle Regression"
 (with discussion) \emph{Annals of Statistics}; see also
-\url{http://www-stat.stanford.edu/~hastie/Papers/LARS/LeastAngle_2002.ps}.
+\url{http://www-stat.stanford.edu/~hastie/Papers/LARS/LeastAngle_2002.pdf}.
 }
 \author{Trevor Hastie}
 \examples{

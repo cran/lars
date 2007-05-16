@@ -1,3 +1,36 @@
+betabreaker=function(object){
+  frac.step=function(x){
+    ##  step=x[1]-1
+    ##  start=x[2]
+    ##  end=x[3]
+    ##  step -start/(end-start)
+    x[1]-1 -x[2]/(x[3]-x[2])
+  }
+  beta=object$beta
+  sbeta=sign(beta)
+  kp=dim(beta)
+  k=kp[1];p=kp[2]
+  dsbeta=abs(sbeta[-1,]-sbeta[-k,])
+  if(any(dsbeta==2)){
+  bbeta=matrix(cbind(
+    step.end=rep(1:(k-1),p),
+    beta.start=as.vector(beta[-k,]),
+    beta.end=as.vector(beta[-1,])
+    )[dsbeta==2],ncol=3)
+  fsteps=apply(bbeta,1,frac.step)
+  new.beta=predict(object,type="coefficient",s=fsteps+1,mode="step")$coef
+ new.beta=rbind(beta,new.beta)
+  fo=c(seq(k)-1,fsteps)
+  beta= new.beta[order(fo),]
+  dimnames(beta)[[1]]=format(round(sort(fo),2))
+}
+  beta
+  
+}
+    
+
+  
+  
 "coef.lars" <-
 function(object, ...)
 {
@@ -16,7 +49,7 @@ function(x, y, K = 10, fraction = seq(from = 0, to = 1, length = 100),
   residmat <- matrix(0, length(fraction), K)
   for(i in seq(K)) {
     omit <- all.folds[[i]]
-    fit <- lars(x[ - omit,  ], y[ - omit], trace = trace, ...)
+    fit <- lars(x[ - omit,,drop=FALSE  ], y[ - omit], trace = trace, ...)
     fit <- predict(fit, x[omit,  ,drop=FALSE], mode = "fraction", s = fraction
                    )$fit
     if(length(omit)==1)fit<-matrix(fit,nrow=1)
@@ -51,25 +84,29 @@ function(x, upper, lower, width = 0.02, ...)
 	range(upper, lower)
 }
 "lars" <-
-  function(x, y, type = c("lasso", "lar", "forward.stagewise"), trace = FALSE, Gram, 
+  function(x, y, type = c("lasso", "lar", "forward.stagewise","stepwise"), trace = FALSE,
+           normalize=TRUE, intercept=TRUE, Gram, 
            eps = .Machine$double.eps,  max.steps, use.Gram = TRUE)
 {
-### program automatically centers and standardizes predictors.
+### program automatically centers and standardizes predictors by default.
 ###
 ### Original program by Brad Efron September 2001
 ### Recoded by Trevor Hastie November 2001
 ### Computational efficiency December 22, 2001
 ### Bug fixes and singularities February 2003
 ### Conversion to R April 2003
+### stepwise and non-standardize options added May 2007
 ### Copyright Brad Efron and Trevor Hastie
   call <- match.call()
   type <- match.arg(type)
   TYPE <- switch(type,
                  lasso = "LASSO",
                  lar = "LAR",
-                 forward.stagewise = "Forward Stagewise")
+                 forward.stagewise = "Forward Stagewise",
+                 stepwise = "Forward Stepwise")
   if(trace)
     cat(paste(TYPE, "sequence\n"))
+  
   nm <- dim(x)
   n <- nm[1]
   m <- nm[2]
@@ -77,21 +114,36 @@ function(x, upper, lower, width = 0.02, ...)
   one <- rep(1, n)
   vn <- dimnames(x)[[2]]	
 ### Center x and y, and scale x, and save the means and sds
-  meanx <- drop(one %*% x)/n
-  x <- scale(x, meanx, FALSE)	# centers x
-  normx <- sqrt(drop(one %*% (x^2)))
-  nosignal<-normx/sqrt(n) < eps
-  if(any(nosignal))# ignore variables with too small a variance
-    {
-    ignores<-im[nosignal]
-    inactive<-im[-ignores]
-    normx[nosignal]<-eps*sqrt(n)
-    if(trace)
-      cat("LARS Step 0 :\t", sum(nosignal), "Variables with Variance < eps; dropped for good\n")	#
+  if(intercept){
+    meanx <- drop(one %*% x)/n
+    x <- scale(x, meanx, FALSE)	# centers x
+    mu <- mean(y)
+    y <- drop(y - mu)
   }
-  else ignores <- NULL #singularities; augmented later as well
-  names(normx) <- NULL
-  x <- scale(x, FALSE, normx)	# scales x
+  else {
+    meanx <- rep(0,m)
+    mu <- 0
+    y <- drop(y)
+  }
+  if(normalize){
+    normx <- sqrt(drop(one %*% (x^2)))
+    nosignal<-normx/sqrt(n) < eps
+    if(any(nosignal))# ignore variables with too small a variance
+      {
+        ignores<-im[nosignal]
+        inactive<-im[-ignores]
+        normx[nosignal]<-eps*sqrt(n)
+        if(trace)
+          cat("LARS Step 0 :\t", sum(nosignal), "Variables with Variance < eps; dropped for good\n")	#
+      }
+    else ignores <- NULL #singularities; augmented later as well
+    names(normx) <- NULL
+    x <- scale(x, FALSE, normx)	# scales x
+  }
+  else {
+    normx <- rep(1,m)
+    ignores <- NULL
+  }
   if(use.Gram & missing(Gram)) {
     if(m > 500 && n < m)
       cat("There are more than 500 variables and n<m;\nYou may wish to restart and set use.Gram=FALSE\n"
@@ -100,14 +152,13 @@ function(x, upper, lower, width = 0.02, ...)
       cat("Computing X'X .....\n")
     Gram <- t(x) %*% x	#Time saving
   }
-  mu <- mean(y)
-  y <- drop(y - mu)
   Cvec <- drop(t(y) %*% x)
   ssy <- sum(y^2)	### Some initializations
   residuals <- y
   if(missing(max.steps))
-    max.steps <- 8*min(m, n-1)
+    max.steps <- 8*min(m, n-intercept)
   beta <- matrix(0, max.steps + 1, m)	# beta starts at 0
+  lambda=double(max.steps)
   Gamrat <- NULL
   arc.length <- NULL
   R2 <- 1
@@ -122,13 +173,19 @@ function(x, upper, lower, width = 0.02, ...)
 ### Now the main loop over moves
 ###
   k <- 0
-  while((k < max.steps) & (length(active) < min(m - length(ignores),n-1)) )
+  while((k < max.steps) & (length(active) < min(m - length(ignores),n-intercept)) )
     {
       action <- NULL
-      k <- k + 1
       C <- Cvec[inactive]	#
 ### identify the largest nonactive gradient
-      Cmax <- max(abs(C))	### Check if we are in a DROP situation
+      Cmax <- max(abs(C))
+      if(Cmax<eps*100){ # the 100 is there as a safety net
+        if(trace)cat("Max |corr| = 0; exiting...\n")
+        break
+      }
+      k <- k + 1
+      lambda[k]=Cmax
+### Check if we are in a DROP situation
       if(!any(drops)) {
         new <- abs(C) >= Cmax - eps
         C <- C[!new]	# for later
@@ -201,7 +258,7 @@ function(x, upper, lower, width = 0.02, ...)
 ### next competitor arrives. There are several cases
 ###
 ### If the active set is all of x, go all the way
-      if(length(active) >=  min(n-1, m - length(ignores) ) ) {
+      if( (length(active) >=  min(n-intercept, m - length(ignores) ) )|type=="stepwise") {
         gamhat <- Cmax/A
       }
       else {
@@ -256,8 +313,10 @@ function(x, upper, lower, width = 0.02, ...)
         names(action) <- vn[abs(action)]
       actions[[k]] <- action
       inactive <- im[ - c(active, ignores)]
+      if(type=="stepwise")Sign=Sign*0
     }
-  beta <- beta[seq(k + 1),  ]	#
+  beta <- beta[seq(k + 1), ,drop=FALSE ]	#
+  lambda=lambda[seq(k)]
   dimnames(beta) <- list(paste(0:k), vn)	### Now compute RSS and R2
   if(trace)
     cat("Computing residuals, RSS etc .....\n")
@@ -265,8 +324,20 @@ function(x, upper, lower, width = 0.02, ...)
   beta <- scale(beta, FALSE, normx)
   RSS <- apply(residuals^2, 2, sum)
   R2 <- 1 - RSS/RSS[1]
-  Cp <- ((n - k - 1) * RSS)/rev(RSS)[1] - n + 2 * seq(k + 1)
-  object <- list(call = call, type = TYPE, R2 = R2, RSS = RSS, Cp = Cp, 
+  actions=actions[seq(k)]
+  netdf=sapply(actions,function(x)sum(sign(x)))
+  df=cumsum(netdf)### This takes into account drops
+  if(intercept)df=c(Intercept=1,df+1)
+  else df=c(Null=0,df)
+  rss.big=rev(RSS)[1]
+  df.big=n-rev(df)[1]
+  if(rss.big<eps|df.big<eps)sigma2=NaN
+  else
+    sigma2=rss.big/df.big
+  Cp <- RSS/sigma2 - n + 2 * df
+  attr(Cp,"sigma2")=sigma2
+  attr(Cp,"n")=n
+  object <- list(call = call, type = TYPE, df=df, lambda=lambda,R2 = R2, RSS = RSS, Cp = Cp, 
                  actions = actions[seq(k)], entry = first.in, Gamrat = Gamrat, 
                  arc.length = arc.length, Gram = if(use.Gram) Gram else NULL, 
                  beta = beta, mu = mu, normx = normx, meanx = meanx)
@@ -367,19 +438,22 @@ function(cv.lars.object,se=TRUE){
 invisible()
 }
 "plot.lars" <-
-  function(x, xvar=c("norm","df","arc.length"), breaks = TRUE, plottype = c("coefficients", "Cp"), 
+  function(x, xvar=c("norm","df","arc.length","step"), breaks = TRUE, plottype = c("coefficients", "Cp"), 
            omit.zeros = TRUE, eps = 1e-10, ...)
 {
   object <- x
   plottype <- match.arg(plottype)
   xvar <- match.arg(xvar)
   coef1 <- object$beta	### Get rid of many zero coefficients
-  coef1 <- scale(coef1, FALSE, 1/object$normx)
+  if(x$type!="LASSO"&&xvar=="norm")# problem with discontinuity in norm
+    coef1=betabreaker(x)
+  stepid=trunc(as.numeric(dimnames(coef1)[[1]]))
+    coef1 <- scale(coef1, FALSE, 1/object$normx)
   if(omit.zeros) {
     c1 <- drop(rep(1, nrow(coef1)) %*% abs(coef1))
     nonzeros <- c1 > eps
     cnums <- seq(nonzeros)[nonzeros]
-    coef1 <- coef1[, nonzeros]
+    coef1 <- coef1[, nonzeros,drop=FALSE]
   }
   else cnums <- seq(ncol(coef1))
   s1<-switch(xvar,
@@ -387,13 +461,15 @@ invisible()
                s1 <- apply(abs(coef1), 1, sum)
                s1/max(s1)
              },
-             df=seq(length(object$arc.length)+1),
-             arc.length=cumsum(c(0,object$arc.length))
+             df=object$df,
+             arc.length=cumsum(c(0,object$arc.length)),
+             step=seq(nrow(coef1))-1
              )
   xname<-switch(xvar,
                 norm="|beta|/max|beta|",
                 df="Df",
-                arc.length="Arc Length"
+                arc.length="Arc Length",
+                step="Step"
                 )
                 
   if(plottype == "Cp") {
@@ -408,7 +484,7 @@ invisible()
       axis(4, at = coef1[nrow(coef1),  ], label = paste(cnums
                                             ), cex = 0.80000000000000004, adj = 0)
       if(breaks) {
-        axis(3, at = s1, labels = paste(seq(s1)-1),cex=.8)
+        axis(3, at = s1, labels = paste(stepid),cex=.8)
         abline(v = s1)
       }
 
@@ -419,7 +495,7 @@ invisible()
 
 "predict.lars" <-
   function(object, newx, s, type = c("fit", "coefficients"), mode = c("step", 
-                                                               "fraction", "norm"), ...)
+                                                               "fraction", "norm","lambda"), ...)
 {
   mode <- match.arg(mode)
   type <- match.arg(type)
@@ -429,6 +505,9 @@ invisible()
     type <- "coefficients"
   }
   betas <- object$beta
+  if(object$type!="LASSO"&&mode%in%c("fraction", "norm"))#detects discontinuities in norm
+    betas=betabreaker(object)
+  dimnames(betas)=list(NULL,dimnames(betas)[[2]])
   sbetas <- scale(betas, FALSE, 1/object$normx)	#scaled for unit norm x
   kp <- dim(betas)
   k <- kp[1]
@@ -458,13 +537,21 @@ invisible()
                       stop("Argument s out of range")
                     nbeta
                   }
+                  ,
+                  lambda={
+                    lambdas=object$lambda
+                    s[s>max(lambdas)]=max(lambdas)
+                    s[s<0]=0
+                    c(lambdas,0)
+                  }
                   )
+
   sfrac <- (s - sbeta[1])/(sbeta[k] - sbeta[1])
-  sbeta <- (sbeta - sbeta[1])/(sbeta[k] - sbeta[1])
+   sbeta <- (sbeta - sbeta[1])/(sbeta[k] - sbeta[1])
   usbeta<-unique(sbeta)
   useq<-match(usbeta,sbeta)
   sbeta<-sbeta[useq]
-  betas<-betas[useq,]
+  betas<-betas[useq,,drop=FALSE]
   coord <- approx(sbeta, seq(sbeta), sfrac)$y
   left <- floor(coord)
   right <- ceiling(coord)
@@ -472,7 +559,7 @@ invisible()
                                                          sbeta[left]) * betas[right,  , drop = FALSE])/(sbeta[right] - sbeta[
                                                                                           left])
   newbetas[left == right,  ] <- betas[left[left == right],  ]
-  robject <- switch(type,
+robject <- switch(type,
                     coefficients = list(s = s, fraction = sfrac, mode = mode, 
                       coefficients = drop(newbetas)),
                     fit = list(s = s, fraction = sfrac, mode = mode, fit = drop(
@@ -497,6 +584,21 @@ function(x, ...)
 	cat(paste("Sequence of", x$type, "moves:\n"))
 	print(actmat[2:1,  ])
 	invisible(x)
+}
+summary.lars<-function(object,sigma2=NULL,...){
+  heading=c(paste("LARS/",object$type,sep=""),paste("Call:",format(object$call)))
+  
+  df=object$df
+  rss=object$RSS
+  K=length(object$actions)
+  stepno=c(0,seq(K))
+  Cp=object$Cp  
+  if(!missing(sigma2)){
+    n=attr(Cp,"n")
+    Cp=rss/sigma2 -n +2*df
+  }
+sumob=data.frame(Step=stepno,Df=df,Rss=rss,Cp=Cp,row.names=1)
+  structure(sumob,heading=heading,class=c("anova","data.frame"))
 }
 "updateR" <-
   function(xnew, R = NULL, xold, eps = .Machine$double.eps, Gram = FALSE)
