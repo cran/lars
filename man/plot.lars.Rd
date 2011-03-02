@@ -6,7 +6,7 @@ Produce a plot of a lars fit. The default is a complete coefficient
 path.
 }
 \usage{
-plot.lars(x, xvar= c("norm", "df", "arc.length", "step"), breaks = TRUE, plottype = c("coefficients", 
+\method{plot}{lars}(x, xvar= c("norm", "df", "arc.length", "step"), breaks = TRUE, plottype = c("coefficients", 
     "Cp"), omit.zeros = TRUE, eps = 1e-10, ...)
 }
 \arguments{

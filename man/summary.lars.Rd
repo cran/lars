@@ -5,7 +5,7 @@
 Produce an anova-type summary for a lars object.
 }
 \usage{
-summary.lars(object, sigma2=NULL, ...)
+\method{summary}{lars}(object, sigma2=NULL, ...)
 }
 \arguments{
   \item{object}{lars object}

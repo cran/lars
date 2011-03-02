@@ -9,9 +9,9 @@ While lars() produces the entire path of solutions, predict.lars
 allows one to extract a prediction at a particular point along the path.
 }
 \usage{
-predict.lars(object, newx, s, type = c("fit", "coefficients"), mode = c("step", 
+\method{predict}{lars}(object, newx, s, type = c("fit", "coefficients"), mode = c("step", 
     "fraction", "norm", "lambda"), ...)
-coef.lars(object, ...)
+\method{coef}{lars}(object, ...)
 }
 \arguments{
 \item{object}{

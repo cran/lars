@@ -10,7 +10,6 @@
 \alias{plotCVLars}
 \alias{print.lars}
 \alias{updateR}
-\alias{.First.lib}
 \description{Internal lars functions}
 \usage{
 betabreaker(object)
@@ -23,7 +22,6 @@ nnls.lars(active, Sign, R, beta, Gram, eps = 1e-10, trace = FALSE,
     use.Gram = TRUE)
 plotCVLars(cv.lars.object, se = TRUE)
 updateR(xnew, R = NULL, xold, eps = .Machine$double.eps, Gram = FALSE)
-.First.lib(lib, pkg)
 }
 \author{Trevor Hastie}
 \details{
