@@ -1,5 +1,5 @@
 useDynLib("lars")
-
+importFrom(utils,head,tail,packageDescription)
 export(lars,backsolvet,betabreaker,coef.lars,cv.folds,cv.lars,delcol,downdateR,error.bars,nnls.lars,plot.lars,
        plotCVLars,predict.lars,print.lars,summary.lars,updateR)
 

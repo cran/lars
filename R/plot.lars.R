@@ -42,7 +42,7 @@ function(x, xvar=c("norm","df","arc.length","step"), breaks = TRUE, plottype = c
               pch = "*", ylab = "Standardized Coefficients")
       title(object$type,line=2.5)
       abline(h = 0, lty = 3)
-      axis(4, at = coef1[nrow(coef1),  ], label = paste(cnums
+      axis(4, at = coef1[nrow(coef1),  ], labels = paste(cnums
                                             ), cex = 0.80000000000000004, adj = 0)
       if(breaks) {
         axis(3, at = s1, labels = paste(stepid),cex=.8)

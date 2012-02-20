@@ -1,7 +1,7 @@
 Package: lars
 Type: Package
-Version: 0.9-8
-Date: 2011-03-02
+Version: 1.1
+Date: 2012-02-20
 Title: Least Angle Regression, Lasso and Forward Stagewise
 Author: Trevor Hastie <hastie@stanford.edu> and Brad Efron
         <brad@stat.stanford.edu>
@@ -13,6 +13,6 @@ Description: Efficient procedures for fitting an entire lasso sequence
 Depends: R (>= 2.10)
 License: GPL-2
 URL: http://www-stat.stanford.edu/~hastie/Papers/#LARS
-Packaged: 2011-03-06 19:39:49 UTC; hastie
+Packaged: 2012-03-01 20:15:47 UTC; hastie
 Repository: CRAN
-Date/Publication: 2011-03-07 05:40:44
+Date/Publication: 2012-03-02 05:04:39
