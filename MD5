@@ -1,4 +1,4 @@
-8652c3c90ab4cff880a646c28b95f08c *DESCRIPTION
+c82ec97660337a32958125aa0356b497 *DESCRIPTION
 b8c81d26a608701b4d1bdadd6d330016 *INDEX
 e292ffc150f46411e9145100108bed10 *NAMESPACE
 6c248c2c197ac989517530db890b9dbd *R/backsolvet.R
@@ -11,7 +11,7 @@ e6ba7cfdd3f9cf125459eb7a283641e9 *R/downdateR.R
 0c6c0b1dfa5c98b55f2e9e097df3747d *R/error.bars.R
 c82d9b4797d9579dc54930bb2cc7eaaf *R/lars.R
 1869a5cc3bdc509f98b092b6ee25feb8 *R/nnls.lars.R
-8f0bc9e8b5e14e498bc59bf3c08ed711 *R/onLoad.R
+4a38213e0b1da09cc1bfd9afad4919be *R/onAttach.R
 c0326eed9ee7588c8bd3e79ed8d1550f *R/plot.lars.R
 ddba02735cb80397a11b95b2024aa019 *R/plotCVLars.R
 1df884b9c633b8e7a2797f3cd75ff252 *R/predict.lars.R
@@ -19,6 +19,7 @@ f8bc1b0da3c5bf926bae4ceae147fee1 *R/print.lars.R
 54a5392c1483d1e3751e8799d79e5b2e *R/summary.lars.R
 86b7e9c62cb99378aa75c96d3f3e61eb *R/updateR.R
 e68a425fe1f250d062cd69c4e3e8769a *data/diabetes.RData
+9b3fe54b18efe7d6211e8e751dce51d2 *inst/ratfor/delcol.r
 1cf9d4658e439d3404f79f51107ced25 *man/cv.lars.Rd
 55bad00f64600e63734911fcb347f945 *man/diabetes.Rd
 0952d15fa1387aee6b2496aa45c1a965 *man/lars-internal.Rd
@@ -26,4 +27,4 @@ c4f2fdd5dd7247c330d39ed1b6a9c0d6 *man/lars.Rd
 8e74b346016759142fc845ba413058f3 *man/plot.lars.Rd
 9e45436dfb15fc3e740e7ad814810308 *man/predict.lars.Rd
 6f183e3b11bfdd6f2d0e2ca45e305107 *man/summary.lars.Rd
-69b6fa16c2e6e8ca992c2dbc116074fc *src/delcol.f
+959d41d5870cef08f3d98eb47cf3c070 *src/delcol.f

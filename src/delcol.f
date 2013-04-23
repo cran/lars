@@ -1,6 +1,6 @@
       subroutine delcol(r,p,k,z,n,nz)
       integer p,k,n,nz
-      double precision r(p,1), z(n,nz)
+      double precision r(p,*), z(n,nz)
       integer p1,i,j
       double precision a,b,c,s,tau
       p1 = p-1
