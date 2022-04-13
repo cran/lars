@@ -1,7 +1,7 @@
 lars <-
 function(x, y, type = c("lasso", "lar", "forward.stagewise","stepwise"), trace = FALSE,
            normalize=TRUE, intercept=TRUE, Gram, 
-           eps = .Machine$double.eps,  max.steps, use.Gram = TRUE)
+           eps = 1e-12,  max.steps, use.Gram = TRUE)
 {
 ### program automatically centers and standardizes predictors by default.
 ###
@@ -185,7 +185,7 @@ function(x, y, type = c("lasso", "lar", "forward.stagewise","stepwise"), trace =
         }
         gam <- c((Cmax - C)/(A - a), (Cmax + C)/(A + a))	
 ### Any dropouts will have gam=0, which are ignored here
-        gamhat <- min(gam[gam > eps], Cmax/A)	
+        gamhat <- min(min(gam[gam > eps],na.rm=TRUE), Cmax/A)	
       }
       if(type == "lasso") {
         dropid <- NULL

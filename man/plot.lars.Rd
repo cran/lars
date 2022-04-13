@@ -6,8 +6,8 @@ Produce a plot of a lars fit. The default is a complete coefficient
 path.
 }
 \usage{
-\method{plot}{lars}(x, xvar= c("norm", "df", "arc.length", "step"), breaks = TRUE, plottype = c("coefficients", 
-    "Cp"), omit.zeros = TRUE, eps = 1e-10, ...)
+\method{plot}{lars}(x, xvar= c("norm", "df", "arc.length", "step"), breaks = TRUE,
+ plottype = c("coefficients", "Cp"), omit.zeros = TRUE, eps = 1e-10, ...)
 }
 \arguments{
   \item{x}{lars object}
@@ -42,7 +42,7 @@ active set at each step.}
 \references{
 Efron, Hastie, Johnstone and Tibshirani (2003) "Least Angle Regression"
 (with discussion) \emph{Annals of Statistics}; see also
-\url{http://www-stat.stanford.edu/~hastie/Papers/LARS/LeastAngle_2002.pdf}
+\url{https://hastie.su.domains/Papers/LARS/LeastAngle_2002.pdf}.
 Yann-Ael Le Borgne (private communication) pointed out the problems in
 plotting forward stagewise and LAR coefficients against L1 norm, and the
 solution we have implemented.

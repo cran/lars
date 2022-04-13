@@ -5,9 +5,9 @@
 Computes the K-fold cross-validated mean squared prediction error for
 lars, lasso, or forward stagewise.}
 \usage{
-cv.lars(x, y, K = 10, index, 
-    trace = FALSE, plot.it = TRUE, se = TRUE,type = c("lasso", "lar", "forward.stagewise", "stepwise"),
-         mode=c("fraction", "step"), ...)
+cv.lars(x, y, K = 10, index, trace = FALSE, plot.it = TRUE, se = TRUE,
+        type = c("lasso", "lar", "forward.stagewise", "stepwise"),
+        mode=c("fraction", "step"), ...)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
@@ -42,7 +42,7 @@ Invisibly returns a list with components (which can be plotted using \code{plotC
 \references{
 Efron, Hastie, Johnstone and Tibshirani (2003) "Least Angle Regression"
 (with discussion) \emph{Annals of Statistics}; see also
-\url{http://www-stat.stanford.edu/~hastie/Papers/LARS/LeastAngle_2002.pdf}.
+\url{https://hastie.su.domains/Papers/LARS/LeastAngle_2002.pdf}.
 }
 \author{Trevor Hastie}
 \examples{

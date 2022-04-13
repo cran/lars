@@ -26,7 +26,7 @@ Produce an anova-type summary for a lars object.
 }
 \references{
 Efron, Hastie, Johnstone and Tibshirani (2003) "Least Angle Regression"
-(with discussion) \emph{Annals of Statistics}; see also \url{http://www-stat.stanford.edu/~hastie/Papers/LARS/LeastAngle_2002.pdf}.
+(with discussion) \emph{Annals of Statistics}; see also \doi{10.1214/009053604000000067}.
 Hastie, Tibshirani and Friedman (2002) Elements of Statistical
 Learning, Springer, NY.
 }

@@ -9,7 +9,8 @@ coefficients and fits, starting from zero, to the least squares fit.
 }
 \usage{
 lars(x, y, type = c("lasso", "lar", "forward.stagewise", "stepwise"), 
-    trace = FALSE, normalize = TRUE, intercept = TRUE, Gram, eps = .Machine$double.eps, max.steps, use.Gram = TRUE)
+    trace = FALSE, normalize = TRUE, intercept = TRUE, Gram, eps = 1e-12,
+     max.steps, use.Gram = TRUE)
 }
 \arguments{
 \item{x}{
@@ -38,7 +39,9 @@ The X'X matrix; useful for repeated runs (bootstrap) where a large X'X
 stays the same.
 }
 \item{eps}{
-An effective zero
+An effective zero, with default \code{1e-12}. If \code{lars()} stops and
+reports \code{NAs}, consider increasing this slightly.
+
 }
 \item{max.steps}{
   Limit the number of steps taken; the default is \code{8 * min(m,
@@ -53,7 +56,8 @@ An effective zero
 }
 \item{use.Gram}{
 When the number m of variables is very large, i.e. larger than N, then
-you may not want LARS to precompute the Gram matrix. Default is use.Gram=TRUE
+you may not want LARS to precompute the Gram matrix. Default is
+\code{use.Gram=TRUE}.
 }}
 \value{
 A "lars" object is returned, for which print, plot, predict, coef and summary
@@ -68,7 +72,7 @@ has recently been added to LARS.
 }
 \references{
 Efron, Hastie, Johnstone and Tibshirani (2003) "Least Angle Regression"
-(with discussion) \emph{Annals of Statistics}; see also \url{http://www-stat.stanford.edu/~hastie/Papers/LARS/LeastAngle_2002.pdf}.
+(with discussion) \emph{Annals of Statistics} \doi{10.1214/009053604000000067}; see also \url{https://hastie.su.domains/Papers/LARS/LeastAngle_2002.pdf}.
 Hastie, Tibshirani and Friedman (2002) Elements of Statistical
 Learning, Springer, NY.
 }
